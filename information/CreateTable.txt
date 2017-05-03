@@ -1,0 +1,151 @@
+-- Table: public.appointments
+
+-- DROP TABLE public.appointments;
+
+CREATE TABLE public.appointments
+(
+    id integer NOT NULL,
+    date timestamp without time zone NOT NULL,
+    patient_amka bigint NOT NULL,
+    doctor_amka bigint NOT NULL,
+    diagnosis text COLLATE pg_catalog."default",
+    CONSTRAINT appointments_pkey PRIMARY KEY (id),
+    CONSTRAINT doctor_amka_fkey FOREIGN KEY (doctor_amka)
+        REFERENCES public.doctor (doctor_amka) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT patient_amka_fkey FOREIGN KEY (patient_amka)
+        REFERENCES public.patient (patient_amka) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.appointments
+    OWNER to postgres;
+
+=======================================================
+
+-- Table: public.departments
+
+-- DROP TABLE public.departments;
+
+CREATE TABLE public.departments
+(
+    id integer NOT NULL DEFAULT nextval('departments_id_seq'::regclass),
+    name text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT departments_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.departments
+    OWNER to postgres;
+
+=======================================================
+
+-- Table: public.doctor
+
+-- DROP TABLE public.doctor;
+
+CREATE TABLE public.doctor
+(
+    doctor_amka bigint NOT NULL,
+    username text COLLATE pg_catalog."default" NOT NULL,
+    password text COLLATE pg_catalog."default" NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    surname text COLLATE pg_catalog."default" NOT NULL,
+    speciality integer NOT NULL,
+    CONSTRAINT doctor_pkey PRIMARY KEY (doctor_amka),
+    CONSTRAINT speciality_fkey FOREIGN KEY (speciality)
+        REFERENCES public.departments (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.doctor
+    OWNER to postgres;
+
+=======================================================
+
+-- Table: public.drugs
+
+-- DROP TABLE public.drugs;
+
+CREATE TABLE public.drugs
+(
+    id integer NOT NULL DEFAULT nextval('drugs_id_seq'::regclass),
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT drugs_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.drugs
+    OWNER to postgres;
+
+=======================================================
+
+-- Table: public.medical_folder_final
+
+-- DROP TABLE public.medical_folder_final;
+
+CREATE TABLE public.medical_folder_final
+(
+    id integer NOT NULL DEFAULT nextval('medical_folder_final_id_seq'::regclass),
+    patient bigint NOT NULL,
+    cure text COLLATE pg_catalog."default" NOT NULL,
+    drug_id integer NOT NULL,
+    CONSTRAINT medical_folder_final_pkey PRIMARY KEY (id),
+    CONSTRAINT drug_id_fkey FOREIGN KEY (drug_id)
+        REFERENCES public.drugs (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT patient_fkey FOREIGN KEY (patient)
+        REFERENCES public.patient (patient_amka) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.medical_folder_final
+    OWNER to postgres;
+
+=======================================================
+
+-- Table: public.patient
+
+-- DROP TABLE public.patient;
+
+CREATE TABLE public.patient
+(
+    patient_amka bigint NOT NULL,
+    username text COLLATE pg_catalog."default" NOT NULL,
+    password text COLLATE pg_catalog."default" NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    surname text COLLATE pg_catalog."default" NOT NULL,
+    gender text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT patient_pkey PRIMARY KEY (patient_amka)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.patient
+    OWNER to postgres;

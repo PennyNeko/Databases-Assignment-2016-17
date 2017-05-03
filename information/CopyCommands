@@ -1,0 +1,17 @@
+COPY public.departments(id,name)
+FROM 'D:\Users\Penny\Desktop\Dataset\departments.csv' DELIMITER ',' CSV HEADER;
+
+COPY public.doctor(doctor_amka,username,password,name,surname,speciality)
+FROM 'D:\Users\Penny\Desktop\Dataset\doctor.csv' DELIMITER ',' CSV HEADER;
+
+COPY public.patient(patient_amka,username,password,name,surname,gender)
+FROM 'D:\Users\Penny\Desktop\Dataset\patient.csv' DELIMITER ',' CSV HEADER;
+
+COPY public.drugs(id,name,description)
+FROM 'D:\Users\Penny\Desktop\Dataset\drugs.csv' DELIMITER ',' CSV HEADER;
+
+COPY public.appointments(id,date,patient_amka,doctor_amka,diagnosis)
+FROM 'D:\Users\Penny\Desktop\Dataset\appointments.csv' DELIMITER ',' CSV HEADER;
+
+COPY public.medical_folder_final(id,patient,cure,drug_id)
+FROM 'D:\Users\Penny\Desktop\Dataset\medical_folder_final.csv' DELIMITER ',' CSV HEADER;
