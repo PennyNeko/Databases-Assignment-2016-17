@@ -1,0 +1,26 @@
+CREATE FUNCTION public.update_medical_folder()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100.0
+    VOLATILE NOT LEAKPROOF 
+AS $BODY$
+DECLARE
+ trig_patient bigint;
+ trig_cure text;
+ trig_drug_id integer;
+BEGIN
+IF (TG_OP = 'INSERT') THEN
+trig_patient = new.patient;
+trig_cure = new.cure;
+trig_drug_id = new.drug_id;
+INSERT INTO medical_folder_final(patient, cure, drug_id)
+VALUES (trig_patient, trig_cure, trig_drug_id);
+END IF;
+END;
+
+CREATE TRIGGER update_medical_folder_final
+    AFTER INSERT
+    ON public.medical_folder_final
+    FOR EACH ROW
+    WHEN appointments.diagnosis IS NOT null
+    EXECUTE PROCEDURE public.update_medical_folder();

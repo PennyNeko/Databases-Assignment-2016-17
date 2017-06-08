@@ -1,0 +1,75 @@
+A.
+
+SELECT res.count, drugs.name
+FROM
+((SELECT drug_id, COUNT(*)
+FROM medical_folder_final
+GROUP BY drug_id
+ORDER BY COUNT DESC
+LIMIT 1)
+
+UNION ALL
+
+(SELECT drug_id, COUNT(*)
+FROM medical_folder_final
+GROUP BY drug_id
+ORDER BY COUNT ASC
+LIMIT 1)) as res
+INNER JOIN drugs
+ON res.drug_id = drugs.id;
+
+B. 
+
+SELECT diagnosis
+FROM appointments
+WHERE date > CURRENT_DATE - interval '7' day;
+
+C.
+
+SELECT res.* 
+FROM
+(SELECT * 
+FROM appointments
+WHERE  EXTRACT(month FROM date) = EXTRACT(month FROM CURRENT_DATE)) as res
+INNER JOIN doctor
+ON res.doctor_amka = doctor.doctor_amka
+WHERE doctor.name = 'X name' AND doctor.surname = 'X surname'
+
+D.
+
+SELECT pat3.*
+FROM
+((SELECT patient_amka, COUNT(*)
+FROM
+(SELECT DISTINCT patient_amka, doctor_amka
+FROM appointments) as pat
+GROUP BY patient_amka) as pat2
+INNER JOIN patient
+ON pat2.patient_amka = patient.patient_amka) as pat3
+WHERE count > 1
+
+E.
+
+SELECT departments.name
+FROM departments
+INNER JOIN
+(SELECT dep.id, COUNT(*)
+FROM appointments
+INNER JOIN doctor as doc
+ON appointments.doctor_amka = doc.doctor_amka
+INNER JOIN departments as dep
+ON doc.speciality = dep.id
+GROUP BY dep.id
+ORDER BY COUNT DESC
+LIMIT 1) as res
+ON res.id = departments.id
+
+F.
+
+SELECT COUNT(res.patient_amka)/15
+FROM
+(SELECT DISTINCT patient_amka, doctor.speciality
+FROM appointments
+INNER JOIN doctor
+ON appointments.doctor_amka = doctor.doctor_amka
+WHERE appointments.diagnosis IS NOT null) as res
